@@ -32,12 +32,154 @@
         text-align: center;
         font-size: small;
       }
+
+      /* Theme Toggle Styles */
+      .theme-toggle-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+
+      .theme-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .lightmode .theme-toggle {
+        color: #555;
+      }
+
+      .darkmode .theme-toggle {
+        color: #ddd;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 26px;
+        background-color: #ccc;
+        border-radius: 13px;
+        transition: background-color 0.3s ease;
+        border: 2px solid transparent;
+      }
+
+      .darkmode .toggle-switch {
+        background-color: #555;
+      }
+
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        background-color: white;
+        border-radius: 50%;
+        top: 1px;
+        left: 1px;
+        transition: transform 0.3s ease;
+      }
+
+      .theme-toggle.active .toggle-switch {
+        background-color: #4CAF50;
+      }
+
+      .theme-toggle.active .toggle-switch::after {
+        transform: translateX(24px);
+      }
+
+      .toggle-label {
+        font-family: "Helvetica", "Arial", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .lightmode .toggle-label {
+        color: #555;
+      }
+
+      .darkmode .toggle-label {
+        color: #ddd;
+      }
+
+      @media (max-width: 600px) {
+        .theme-toggle-container {
+          top: 10px;
+          right: 10px;
+        }
+
+        .toggle-label {
+          font-size: 12px;
+        }
+
+        .toggle-switch {
+          width: 44px;
+          height: 24px;
+        }
+
+        .toggle-switch::after {
+          width: 20px;
+          height: 20px;
+        }
+
+        .theme-toggle.active .toggle-switch::after {
+          transform: translateX(20px);
+        }
+      }
     </style>
   </head>
   <body>
+    <div class="theme-toggle-container">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+        <span class="toggle-label" id="toggleLabel">Dark</span>
+        <div class="toggle-switch"></div>
+      </button>
+    </div>
     <h1>Yes.</h1>
     <script defer>
 document.addEventListener("DOMContentLoaded", function() {
+  // Initialize theme
+  const htmlElement = document.documentElement;
+  const themeToggle = document.getElementById("themeToggle");
+  const toggleLabel = document.getElementById("toggleLabel");
+  
+  // Retrieve stored theme preference or default to 'darkmode'
+  const storedTheme = localStorage.getItem("theme") || "darkmode";
+  
+  // Set initial theme
+  function setTheme(theme) {
+    htmlElement.classList.remove("lightmode", "darkmode");
+    htmlElement.classList.add(theme);
+    localStorage.setItem("theme", theme);
+    
+    // Update toggle button appearance
+    if (theme === "lightmode") {
+      themeToggle.classList.add("active");
+      toggleLabel.textContent = "Light";
+    } else {
+      themeToggle.classList.remove("active");
+      toggleLabel.textContent = "Dark";
+    }
+  }
+  
+  // Set initial theme on page load
+  setTheme(storedTheme);
+  
+  // Toggle theme on button click
+  themeToggle.addEventListener("click", function() {
+    const currentTheme = htmlElement.classList.contains("lightmode") ? "lightmode" : "darkmode";
+    const newTheme = currentTheme === "lightmode" ? "darkmode" : "lightmode";
+    setTheme(newTheme);
+  });
+
+  // Random greeting text
   const options = [
     "Yes.",
     "Affirmative",
